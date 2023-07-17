@@ -11,22 +11,25 @@ add_subdirectory(libs/DPP)
 add_executable(${PROJECT_NAME}
         src/main.cpp
         # your other files...
-        src/include/secrets.hpp src/commands/ping.hpp src/include/interaction_command.hpp src/commands/info.hpp src/include/uwufy.hpp)
+        src/include/secrets.hpp
+        src/commands/ping.hpp
+        src/include/interaction_command.hpp
+        src/commands/info.hpp
+        src/include/uwufy.hpp
+)
 
 # Linking libraries
 target_link_libraries(${PROJECT_NAME}
         dpp
-        # Add any other libs you want to use here
-        )
+)
 
 # Specify includes
 target_include_directories(${PROJECT_NAME} PRIVATE
         libs/DPP/include
-        # Remember to add the include directories of any other libraries too
-        )
+)
 
 # Set C++ version
 set_target_properties(${PROJECT_NAME} PROPERTIES
         CXX_STANDARD 23
         CXX_STANDARD_REQUIRED ON
-        )
+)
