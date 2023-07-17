@@ -7,20 +7,22 @@
 #include "appcommand.h"
 #include "dispatcher.h"
 #include "colors.h"
-#include "../include/slash_command.hpp"
+#include "../include/interaction_command.hpp"
+#include "../include/uwufy.hpp"
 
 dpp::slashcommand command_ping() {
     return dpp::slashcommand()
-        .set_name("ping")
-        .set_description("Pong!");
+            .set_name("ping")
+            .set_description("Pong!");
 }
 
-dpp::embed embed(dpp::cluster& client, const dpp::slashcommand_t& event) {
+dpp::embed embed_ping(dpp::cluster &client, const dpp::slashcommand_t &event) {
     return dpp::embed()
             .set_color(dpp::colors::blurple)
-            .set_title("Hello " + slash_command::member::get_name(event));
+            .set_title("Hello " + interaction_command::member::get_name(event))
+            .set_description(uwufy("Hello World"));
 }
 
 void handle_ping(dpp::cluster& client, const dpp::slashcommand_t& event) {
-    event.reply(dpp::message().add_embed(embed(client, event)));
+    event.reply(dpp::message().add_embed(embed_ping(client, event)));
 };

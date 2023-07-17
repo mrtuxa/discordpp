@@ -6,9 +6,8 @@
 #include "cluster.h"
 #include "once.h"
 #include "commands/ping.hpp"
-#include <iomanip>
+#include "commands/info.hpp"
 #include <sstream>
-
 std::string token = TOKEN;
 
 // Global flag to indicate if Ctrl+C was pressed
@@ -27,13 +26,6 @@ int main() {
 
     client.on_log(dpp::utility::cout_logger());
 
-    client.on_slashcommand([](const dpp::slashcommand_t& event) {
-       if(event.command.get_command_name() == "ping")  {
-           event.reply("Pong!");
-       } else if (event.command.get_command_name() == "rules") {}
-            dpp::embed embed = dpp::embed()
-                    .set_title("")
-       });
     client.on_message_create([&client](const dpp::message_create_t & event) {
 
         std::stringstream ss(event.msg.content);
@@ -84,29 +76,43 @@ int main() {
         }
     });
 
-    client.on_ready([&client](const dpp::ready_t& event) {
-       if (dpp::run_once<struct register_bot_commands>()) {
-           std::vector<dpp::slashcommand> commands = {
-                   command_ping()
-           };
-
-           client.guild_bulk_command_create(commands, GUILD_ID, [&client](const dpp::confirmation_callback_t &event) {
-               if (event.is_error()) {
-                   client.log(dpp::ll_error, "error creating slash commands: " + event.http_info.body);
-               } else {
-                   client.log(dpp::ll_info, "success creating slash commands");
-               }
-           });
-       }
+    client.on_slashcommand([&client](const dpp::slashcommand_t &event) {
+        if (event.command.get_command_name() == "ping") {
+            handle_ping(client, event);
+        } else if (event.command.get_command_name() == "info") {
+            handle_info(client, event);
+        }
     });
 
-    client.on_guild_member_add([&client](const dpp::guild_member_add_t& event) {
-        dpp::guild* guild = dpp::find_guild(GUILD_ID);
+    client.on_ready([&client](const dpp::ready_t &event) {
+        if (dpp::run_once<struct register_bot_commands>()) {
+            std::vector<dpp::slashcommand> commands = {
+                    command_ping(),
+                    command_info()
+            };
 
-        struct joined_user {
-            std::string name = event.added.get_user()->global_name;
-        };
+            client.guild_bulk_command_create(commands, GUILD_ID, [&client](const dpp::confirmation_callback_t &event) {
+                if (event.is_error()) {
+                    client.log(dpp::ll_error, "error creating slash commands: " + event.http_info.body);
+                } else {
+                    client.log(dpp::ll_info, "success creating slash commands");
+                }
+            });
+            client.global_bulk_command_create(commands, [&client](const dpp::confirmation_callback_t &event) {
+                if (event.is_error()) {
+                    client.log(dpp::ll_error, "error creating slash commands: " + event.http_info.body);
+                } else {
+                    client.log(dpp::ll_info, "success creating slash commands");
+                }
+            });
+        }
     });
+
+    client.on_guild_member_add([&client](const dpp::guild_member_add_t &event) {
+        // Now you can use the 'event' parameter inside the lambda function.
+        std::string name = event.added.get_user()->global_name;
+    });
+
 
     client.start(dpp::st_wait);
 

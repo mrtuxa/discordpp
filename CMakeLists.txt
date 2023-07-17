@@ -11,7 +11,7 @@ add_subdirectory(libs/DPP)
 add_executable(${PROJECT_NAME}
         src/main.cpp
         # your other files...
-        src/include/secrets.hpp src/commands/ping.hpp src/include/slash_command.hpp)
+        src/include/secrets.hpp src/commands/ping.hpp src/include/interaction_command.hpp src/commands/info.hpp src/include/uwufy.hpp)
 
 # Linking libraries
 target_link_libraries(${PROJECT_NAME}
