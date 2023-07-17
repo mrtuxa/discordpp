@@ -43,7 +43,7 @@ int main() {
             };
 
             /**
-             * b
+             * FUCK THIS PIECE OF SHIT
              * IT'S not working
              * ERROR: error creating slash commands: {"message": "Missing Access", "code": 50001}
             client.guild_bulk_command_create(commands, GUILD_ID, [&client](const dpp::confirmation_callback_t &event) {
